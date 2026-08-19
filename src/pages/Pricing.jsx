@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { showToast } from '../utils'
 
 const MONTHLY_PLANS = [
   {
@@ -142,8 +143,8 @@ export default function Pricing() {
       <p className="pricing-sub">解锁更多创作能力，让 Every dog has its day</p>
 
       <div className="pricing-tabs">
-        <button className={`pricing-tab${tab === 'yearly' ? ' active' : ''}`} onClick={() => setTab('yearly')}>连续包年</button>
         <button className={`pricing-tab${tab === 'monthly' ? ' active' : ''}`} onClick={() => setTab('monthly')}>连续包月</button>
+        <button className={`pricing-tab${tab === 'yearly' ? ' active' : ''}`} onClick={() => setTab('yearly')}>连续包年</button>
       </div>
 
       <div className="pricing-grid">
@@ -160,7 +161,9 @@ export default function Pricing() {
             {plan.details.map((d, j) => (
               <div key={j} className="price-detail">• {d}</div>
             ))}
-            <button className={`price-btn ${plan.btnClass}`}>{plan.btnText}</button>
+            <button className={`price-btn ${plan.btnClass}`} onClick={() => showToast(`${plan.name} 订阅功能即将上线`, 'info')}>
+              {plan.btnText}
+            </button>
             <ul className="price-features">
               {plan.features.map((f, j) => (
                 <li key={j} className={`price-feature${f.on ? '' : ' off'}`}>
