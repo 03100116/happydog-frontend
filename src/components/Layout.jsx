@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import AIAssistant from './AIAssistant'
 import LoginModal from './LoginModal'
 import ProfileModal from './ProfileModal'
+import ToastContainer from './Toast'
 
 const NAV_ITEMS = [
   { to: '/', icon: '🎵', label: '创作' },
@@ -21,12 +22,6 @@ export default function Layout({ children }) {
 
   return (
     <div className="shell">
-      {/* Floating dog decorations */}
-      <div className="dog-deco">🐕</div>
-      <div className="dog-deco">🐾</div>
-      <div className="dog-deco">🦴</div>
-      <div className="dog-deco">🐶</div>
-      <div className="dog-deco">🎵</div>
       {/* NAV */}
       <nav className="nav">
         <div className="nav-logo">
@@ -74,6 +69,9 @@ export default function Layout({ children }) {
 
       {/* Profile Modal */}
       {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
+
+      {/* Global Toast */}
+      <ToastContainer />
     </div>
   )
 }
