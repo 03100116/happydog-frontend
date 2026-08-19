@@ -86,11 +86,11 @@ export default function Studio() {
     }
   }
 
-  const canCreate = description.trim().length > 0 || imagePreview
+  const canCreate = description.trim().length > 0 || imagePreview || selectedEmotion
 
   const handleCreate = async () => {
     if (!canCreate) {
-      showToast('请先写下心情或上传一张图片', 'warning')
+      showToast('请先写下心情、选择今日心情或上传一张图片', 'warning')
       return
     }
     setGenerating(true)
@@ -276,7 +276,7 @@ export default function Studio() {
             <div className="loc-confirm-box" onClick={e => e.stopPropagation()}>
               <div className="loc-confirm-icon">📍</div>
               <h4>允许访问位置信息？</h4>
-              <p>HappyDog🎼 将基于你的位置推荐更贴近本地的音乐风格。</p>
+              <p>HappyDog 将基于你的位置推荐更贴近本地的音乐风格。</p>
               <div className="loc-confirm-actions">
                 <button className="ct" onClick={cancelLocation}>取消</button>
                 <button className="cbtn" onClick={confirmLocation}>允许</button>
