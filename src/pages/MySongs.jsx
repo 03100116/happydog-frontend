@@ -79,8 +79,6 @@ export default function MySongs() {
                   <div className="big-card-stats">
                     <span className="my-card-status" style={{ background: st.bg, color: st.color }}>{st.label}</span>
                     {song.status === 0 && <button className="ra" onClick={() => handlePublish(song.id)}>📢 发布</button>}
-                    {song.status === 1 && <button className="ra">🔀 Remix</button>}
-                    <button className="ra">⋯</button>
                   </div>
                 </div>
               </div>
@@ -118,8 +116,8 @@ export default function MySongs() {
               </div>
               <div className="card-popup-actions">
                 <button className="gbtn" style={{ fontSize: 11, padding: '6px 14px' }}>▶ 播放</button>
-                <button className="ct" style={{ fontSize: 11, padding: '6px 14px' }}>🔀 Remix</button>
                 <button className="ct" style={{ fontSize: 11, padding: '6px 14px' }}>📋 歌词</button>
+                <button className="ct" style={{ fontSize: 11, padding: '6px 14px' }}>⬇ 下载</button>
                 {popupSong.status === 0 && <button className="gbtn" style={{ fontSize: 11, padding: '6px 14px' }} onClick={async () => { await handlePublish(popupSong.id); setPopupSong(null) }}>📢 发布</button>}
               </div>
             </div>
