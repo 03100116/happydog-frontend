@@ -22,10 +22,18 @@ export default function Layout({ children }) {
 
   return (
     <div className="shell">
+      {/* Floating dog decorations */}
+      <div className="dog-deco dog-deco-1"><img src="/dog-logo.png" alt="" /></div>
+      <div className="dog-deco dog-deco-2"><img src="/dog-logo.png" alt="" /></div>
+      <div className="dog-deco dog-deco-3">🐕</div>
+      <div className="dog-deco dog-deco-4">🐶</div>
+      <div className="dog-deco dog-deco-5">🐾</div>
+      <div className="dog-deco dog-deco-6">🎵</div>
+      <div className="dog-deco dog-deco-7">🎶</div>
       {/* NAV */}
       <nav className="nav">
         <div className="nav-logo">
-          <span style={{ fontSize: 20 }}>🐕</span>
+          <img src="/dog-logo.png" alt="HappyDog" style={{ height: 28, width: 28, objectFit: 'contain' }} />
           <span className="nav-logo-text">HappyDog🎼</span>
         </div>
         <div style={{ flex: 1 }} />
