@@ -37,12 +37,12 @@ export default function Community() {
     if (subTab === 'square') {
       apiGetCards({ style: styleFilter, sort }).then(res => {
         if (res.code === 0) {
-          const merged = [...publishedCards, ...res.data.list]
+          const merged = [...publishedCards, ...(res.data?.list || [])]
           setCards(merged)
         }
-      })
+      }).catch(() => {})
     } else {
-      apiGetRooms().then(res => { if (res.code === 0) setRooms(res.data) })
+      apiGetRooms().then(res => { if (res.code === 0) setRooms(res.data || []) }).catch(() => {})
     }
   }, [subTab, styleFilter, sort])
 
