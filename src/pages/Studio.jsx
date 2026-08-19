@@ -223,9 +223,11 @@ export default function Studio() {
               )}
             </div>
 
-            <div className="cb-sp" />
+          </div>
 
-            <button className="cbtn" onClick={handleCreate} disabled={!canCreate}>🎵 创作</button>
+          {/* Create button - centered full width */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 14 }}>
+            <button className="cbtn" style={{ width: '100%', maxWidth: 320, justifyContent: 'center', padding: '13px 28px', fontSize: 15 }} onClick={handleCreate} disabled={!canCreate}>🎵 创作</button>
           </div>
 
           {/* f) Advanced panel - only style and voice type */}
