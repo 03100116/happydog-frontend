@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { STYLES, VOICE_TYPES, apiGenerate, apiLocate, apiPublishToSquare } from '../api'
+import { generateWaveform, showToast } from '../utils'
 
 const MODELS = [
   { key: 'fun-music', label: 'Fun-Music', desc: '全能音乐生成' },
@@ -16,6 +17,8 @@ const EMOTIONS = [
   { icon: '🌙', label: '孤独' }, { icon: '🌈', label: '希望' },
 ]
 
+const COVER_COLORS = ['#8ed8c8','#f8c8b4','#c4b5fd','#a5d0f5','#f0c040','#e8707a','#6bc980']
+
 export default function Studio() {
   const [model, setModel] = useState('fun-music')
   const [showModelMenu, setShowModelMenu] = useState(false)
@@ -23,10 +26,12 @@ export default function Studio() {
   const [description, setDescription] = useState('')
   const [locationEnabled, setLocEnabled] = useState(false)
   const [locationData, setLocationData] = useState(null)
+  const [showLocConfirm, setShowLocConfirm] = useState(false)
   const [liveEnabled, setLiveEnabled] = useState(false)
   const [showAdv, setShowAdv] = useState(false)
   const [style, setStyle] = useState('民谣')
   const [voiceType, setVoiceType] = useState('女声')
+  const [language, setLanguage] = useState('中文')
   const [showEmotions, setShowEmotions] = useState(false)
   const [selectedEmotion, setSelectedEmotion] = useState(null)
   const [generating, setGenerating] = useState(false)
@@ -46,28 +51,50 @@ export default function Studio() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const handleLocation = async () => {
-    if (locationEnabled) { setLocEnabled(false); setLocationData(null); return }
-    const granted = window.confirm('HappyDog🎼 想要访问你的位置信息，是否允许？')
-    if (granted) {
-      setLocEnabled(true)
-      const res = await apiLocate({})
-      if (res.code === 0) setLocationData(res.data)
+  const handleLocationRequest = () => setShowLocConfirm(true)
+
+  const confirmLocation = async () => {
+    setShowLocConfirm(false)
+    setLocEnabled(true)
+    const res = await apiLocate({})
+    if (res.code === 0) {
+      setLocationData(res.data)
+      showToast(`已定位到：${res.data.city}`, 'success')
+    } else {
+      showToast('定位失败，请稍后重试', 'error')
+      setLocEnabled(false)
     }
+  }
+
+  const cancelLocation = () => setShowLocConfirm(false)
+
+  const removeLocation = () => {
+    setLocEnabled(false)
+    setLocationData(null)
   }
 
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('请上传图片文件', 'warning')
+        return
+      }
       const reader = new FileReader()
       reader.onload = (ev) => setImagePreview(ev.target.result)
       reader.readAsDataURL(file)
     }
   }
 
+  const canCreate = description.trim().length > 0 || imagePreview
+
   const handleCreate = async () => {
+    if (!canCreate) {
+      showToast('请先写下心情或上传一张图片', 'warning')
+      return
+    }
     setGenerating(true)
-    await apiGenerate({ description, style, voice_type: voiceType })
+    await apiGenerate({ description, style, language, voice_type: voiceType })
     setTimeout(() => {
       setGenerating(false)
       setShowResult(true)
@@ -75,24 +102,32 @@ export default function Studio() {
   }
 
   const handlePublish = async () => {
-    await apiPublishToSquare({
-      title: `${selectedEmotion || '🎵'} ${style}之日`,
+    const res = await apiPublishToSquare({
+      title: songTitle,
       style,
       language: '中文',
       region: locationData?.city || '',
-      cover_color: '#3b82f6',
+      cover_color: coverColor,
       emoji: selectedEmotion || '🎵',
     })
+    if (res.code === 0) {
+      showToast('已发布到社群广场', 'success')
+    } else {
+      showToast('发布失败，请稍后重试', 'error')
+    }
   }
 
   const currentModel = MODELS.find(m => m.key === model)
 
-  const randomColor = () => {
-    const colors = ['#8ed8c8','#f8c8b4','#c4b5fd','#a5d0f5','#f0c040','#e8707a','#6bc980']
-    return colors[Math.floor(Math.random() * colors.length)]
-  }
-
   const songTitle = `${selectedEmotion || '🎵'} ${style}之日`
+
+  const coverColor = useMemo(() => {
+    let seedNum = 0
+    for (let i = 0; i < songTitle.length; i++) seedNum += songTitle.charCodeAt(i)
+    return COVER_COLORS[seedNum % COVER_COLORS.length]
+  }, [songTitle, showResult])
+
+  const waveform = useMemo(() => generateWaveform(60, songTitle), [songTitle, showResult])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -139,7 +174,7 @@ export default function Studio() {
 
           {/* e) Bottom action row */}
           <div className="cb-a">
-            <button className={`ct loc-btn${locationEnabled ? ' active' : ''}`} onClick={handleLocation}>
+            <button className={`ct loc-btn${locationEnabled ? ' active' : ''}`} onClick={locationEnabled ? removeLocation : handleLocationRequest}>
               📍 {locationEnabled ? (locationData?.city || '已定位') : '定位'}
             </button>
 
@@ -190,7 +225,7 @@ export default function Studio() {
 
             <div className="cb-sp" />
 
-            <button className="cbtn" onClick={handleCreate}>🎵 创作</button>
+            <button className="cbtn" onClick={handleCreate} disabled={!canCreate}>🎵 创作</button>
           </div>
 
           {/* f) Advanced panel - only style and voice type */}
@@ -206,6 +241,13 @@ export default function Studio() {
                 <label>人声</label>
                 <select className="as" value={voiceType} onChange={e => setVoiceType(e.target.value)}>
                   {VOICE_TYPES.map(v => <option key={v}>{v}</option>)}
+                </select>
+              </div>
+              <div className="ag">
+                <label>语言</label>
+                <select className="as" value={language} onChange={e => setLanguage(e.target.value)}>
+                  <option>汉语</option>
+                  <option>英语</option>
                 </select>
               </div>
             </div>
@@ -226,12 +268,27 @@ export default function Studio() {
           </div>
         )}
 
-        {/* h) Result card - floating overlay */}
+        {/* h) Location confirm modal */}
+        {showLocConfirm && (
+          <div className="modal-overlay" onClick={cancelLocation}>
+            <div className="loc-confirm-box" onClick={e => e.stopPropagation()}>
+              <div className="loc-confirm-icon">📍</div>
+              <h4>允许访问位置信息？</h4>
+              <p>HappyDog🎼 将基于你的位置推荐更贴近本地的音乐风格。</p>
+              <div className="loc-confirm-actions">
+                <button className="ct" onClick={cancelLocation}>取消</button>
+                <button className="cbtn" onClick={confirmLocation}>允许</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* i) Result card - floating overlay */}
         {showResult && (
           <div className="result-overlay" onClick={() => setShowResult(false)}>
             <div className="music-result-card large" ref={resultRef} onClick={e => e.stopPropagation()}>
               <button className="result-close" onClick={() => setShowResult(false)}>✕</button>
-              <div className="mrc-cover" style={!imagePreview ? { background: randomColor() } : undefined}>
+              <div className="mrc-cover" style={!imagePreview ? { background: coverColor } : undefined}>
                 {imagePreview ? (
                   <img src={imagePreview} className={`mrc-cover-img${liveEnabled ? ' live-photo' : ''}`} alt="cover" />
                 ) : null}
@@ -254,14 +311,14 @@ export default function Studio() {
               <div className="mrc-body">
                 <div className="mrc-meta-row">
                   <div className="mrc-weather">
-                    <span>⛅ 24°C</span>
-                    <span className="mrc-weather-sub">微风 · 晴</span>
+                    <span>{locationEnabled ? `📍 ${locationData?.city || '未知位置'}` : '🎵 本地创作'}</span>
+                    <span className="mrc-weather-sub">{voiceType} · {style}</span>
                   </div>
                   <button className="mrc-heart">♡</button>
                 </div>
                 <div className="mrc-wave">
-                  {Array.from({ length: 60 }, (_, i) => (
-                    <div key={i} className="mrc-wave-bar" style={{ height: Math.random() * 24 + 4, background: i < 24 ? 'var(--red)' : 'rgba(255,255,255,.06)' }} />
+                  {waveform.map((h, i) => (
+                    <div key={i} className="mrc-wave-bar" style={{ height: h, background: i < 24 ? 'var(--red)' : 'rgba(255,255,255,.06)' }} />
                   ))}
                 </div>
                 <div className="mrc-time">
