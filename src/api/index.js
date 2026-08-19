@@ -2,9 +2,8 @@
 // All mock data removed. Every function makes real HTTP calls.
 // To switch back to mock, replace this file with the original api/index.js
 
-// In dev: Vite proxy forwards /api → http://112.124.55.50:8001/api
-// In prod: set VITE_API_BASE env var or default to direct URL
-const BASE = (import.meta.env?.VITE_API_BASE || '') + '/api/v1'
+// Direct backend URL — bypasses Vite proxy (proxy returning 500)
+const BASE = 'http://112.124.55.50:8001/api/v1'
 
 // ═══ ENUMS (keep for UI) ═══
 export const STYLES = ['民谣','流行','说唱','R&B','古风','摇滚','电子','爵士','Lo-fi']
