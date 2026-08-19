@@ -30,6 +30,12 @@ export default function Layout({ children }) {
       <div className="dog-deco dog-deco-5">🐾</div>
       <div className="dog-deco dog-deco-6">🎵</div>
       <div className="dog-deco dog-deco-7">🎶</div>
+      <div className="dog-deco dog-deco-8">🦴</div>
+      <div className="dog-deco dog-deco-9">🎤</div>
+      <div className="dog-deco dog-deco-10">🐕‍🦺</div>
+      <div className="dog-deco dog-deco-11">🎧</div>
+      <div className="dog-deco dog-deco-12">🐾</div>
+      <div className="dog-deco dog-deco-13"><img src="/dog-logo.png" alt="" /></div>
       {/* NAV */}
       <nav className="nav">
         <div className="nav-logo">
