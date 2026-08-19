@@ -18,7 +18,7 @@ export default function LoginModal({ mode: initMode, onClose, onSwitch }) {
     }
     if (!form.username.trim()) return '请输入用户名'
     if (!form.password) return '请输入密码'
-    if (form.password.length < 4) return '密码长度不能少于 4 位'
+    if (form.password.length < 8) return '密码长度不能少于 8 位'
     return ''
   }
 
@@ -72,7 +72,7 @@ export default function LoginModal({ mode: initMode, onClose, onSwitch }) {
         </div>
         <div className="login-field">
           <label>密码</label>
-          <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="输入密码" />
+          <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="密码（至少8位）" />
         </div>
         {error && <div style={{ color: 'var(--red)', fontSize: 11, marginBottom: 8 }}>{error}</div>}
         <button className="login-submit" onClick={handleSubmit} disabled={loading}>
