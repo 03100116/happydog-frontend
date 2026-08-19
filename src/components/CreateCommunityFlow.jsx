@@ -1,154 +1,76 @@
-import { useState, useEffect } from 'react'
-import { STYLES } from '../api'
-
-const STEPS = [
-  { title: '社群名称', placeholder: '给你的社群起个名字...' },
-  { title: '音乐风格', placeholder: null },
-  { title: '社群简介', placeholder: '描述一下你的社群方向...' },
-]
+import { useState } from 'react'
+import { showToast } from '../utils'
 
 export default function CreateCommunityFlow({ onClose }) {
-  const [step, setStep] = useState(0)
   const [name, setName] = useState('')
-  const [style, setStyle] = useState('')
   const [desc, setDesc] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showVideo, setShowVideo] = useState(false)
+  const [inviteInput, setInviteInput] = useState('')
+  const [invites, setInvites] = useState([])
 
-  const canNext = () => {
-    if (step === 0) return name.trim().length > 0
-    if (step === 1) return style.length > 0
-    if (step === 2) return desc.trim().length > 0
-    return false
-  }
-
-  const handleNext = () => {
-    if (step < STEPS.length - 1) {
-      setStep(step + 1)
-    } else {
-      // Start "creating"
-      setLoading(true)
-      setTimeout(() => {
-        setLoading(false)
-        setShowVideo(true)
-      }, 3000)
+  const addInvite = () => {
+    const v = inviteInput.trim()
+    if (v && !invites.includes(v)) {
+      setInvites([...invites, v])
+      setInviteInput('')
     }
   }
 
-  // Loading screen with progress simulation
-  if (loading) {
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="ccf-box" onClick={e => e.stopPropagation()}>
-          <div className="ccf-loading">
-            <div className="ccf-spinner" />
-            <div className="ccf-loading-title">正在创建社群...</div>
-            <div className="ccf-loading-sub">AI 正在为你搭建社群空间</div>
-            <div className="ccf-loading-bar">
-              <div className="ccf-loading-fill" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+  const removeInvite = (v) => {
+    setInvites(invites.filter(i => i !== v))
   }
 
-  // Video result screen
-  if (showVideo) {
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="ccf-box ccf-video-box" onClick={e => e.stopPropagation()}>
-          <div className="ccf-hd">
-            <div className="ccf-tt">🎉 社群创建成功</div>
-            <button className="ccf-close" onClick={onClose}>✕</button>
-          </div>
-          <div className="ccf-video-wrap">
-            <video
-              className="ccf-video"
-              controls
-              autoPlay
-              poster=""
-              src="https://www.w3schools.com/html/mov_bbb.mp4"
-            >
-              您的浏览器不支持视频播放
-            </video>
-          </div>
-          <div className="ccf-video-info">
-            <div className="ccf-video-name">🎵 {name}</div>
-            <div className="ccf-video-meta">{style} · 已创建</div>
-          </div>
-          <div className="ccf-video-actions">
-            <button className="gbtn" onClick={onClose}>进入社群</button>
-            <button className="ct" onClick={onClose}>邀请好友</button>
-          </div>
-        </div>
-      </div>
-    )
+  const handleCreate = () => {
+    if (!name.trim()) { showToast('请输入空间名称', 'error'); return }
+    showToast(`空间「${name}」创建成功！已邀请 ${invites.length} 人`, 'success')
+    onClose()
   }
 
-  // Step form
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="ccf-box" onClick={e => e.stopPropagation()}>
-        <div className="ccf-hd">
-          <div className="ccf-tt">创建新社群</div>
-          <button className="ccf-close" onClick={onClose}>✕</button>
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="create-space-box" onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+          <div className="create-space-title">创建空间</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: 'var(--text3)', padding: 4 }}>✕</button>
         </div>
 
-        {/* Step indicator */}
-        <div className="ccf-steps">
-          {STEPS.map((s, i) => (
-            <div key={i} className={`ccf-step${i === step ? ' active' : ''}${i < step ? ' done' : ''}`}>
-              <div className="ccf-step-dot">{i < step ? '✓' : i + 1}</div>
-              <div className="ccf-step-label">{s.title}</div>
-            </div>
-          ))}
-          <div className="ccf-step-line">
-            <div className="ccf-step-fill" style={{ width: `${(step / (STEPS.length - 1)) * 100}%` }} />
+        <div className="create-space-field">
+          <label>空间名称</label>
+          <input className="create-space-input" value={name} onChange={e => setName(e.target.value)}
+            placeholder="给你的空间起个名字..." autoFocus
+            onKeyDown={e => e.key === 'Enter' && name.trim() && document.querySelector('.desc-input')?.focus()} />
+        </div>
+
+        <div className="create-space-field">
+          <label>空间简介</label>
+          <textarea className="create-space-input desc-input" value={desc} onChange={e => setDesc(e.target.value)}
+            placeholder="简单描述这个空间的主题..." rows={3}
+            style={{ resize: 'vertical', minHeight: 60, fontFamily: 'inherit' }} />
+        </div>
+
+        <div className="create-space-field">
+          <label>邀请成员</label>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input className="create-space-input" value={inviteInput} onChange={e => setInviteInput(e.target.value)}
+              placeholder="输入昵称或手机号，回车添加"
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addInvite() } }}
+              style={{ flex: 1 }} />
+            <button onClick={addInvite} style={{ padding: '0 14px', borderRadius: 8, border: '1px solid var(--gb)', background: 'var(--s2)', color: 'var(--teal)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>添加</button>
           </div>
-        </div>
-
-        {/* Step content */}
-        <div className="ccf-body">
-          {step === 0 && (
-            <div className="ccf-field">
-              <label>社群名称</label>
-              <input className="ccf-input" value={name} onChange={e => setName(e.target.value)}
-                placeholder="给你的社群起个名字..." autoFocus
-                onKeyDown={e => e.key === 'Enter' && canNext() && handleNext()} />
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="ccf-field">
-              <label>选择音乐风格</label>
-              <div className="ccf-style-grid">
-                {STYLES.map(s => (
-                  <button key={s} className={`ccf-style-chip${style === s ? ' active' : ''}`}
-                    onClick={() => setStyle(s)}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="ccf-field">
-              <label>社群简介</label>
-              <textarea className="ccf-textarea" value={desc} onChange={e => setDesc(e.target.value)}
-                placeholder="描述一下你的社群方向..." autoFocus />
+          {invites.length > 0 && (
+            <div className="create-space-invite-tags">
+              {invites.map(v => (
+                <span key={v} className="create-space-invite-tag">
+                  {v}
+                  <button onClick={() => removeInvite(v)} style={{ background: 'none', border: 'none', color: 'var(--teal)', cursor: 'pointer', fontSize: 12, padding: 0, lineHeight: 1 }}>✕</button>
+                </span>
+              ))}
             </div>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="ccf-actions">
-          {step > 0 && <button className="ct" onClick={() => setStep(step - 1)}>← 上一步</button>}
-          <div style={{ flex: 1 }} />
-          <button className={`cbtn${!canNext() ? ' disabled' : ''}`} disabled={!canNext()} onClick={handleNext}>
-            {step === STEPS.length - 1 ? '🚀 创建社群' : '下一步 →'}
-          </button>
+        <div className="create-space-actions">
+          <button className="ct" onClick={onClose} style={{ fontSize: 12, padding: '8px 16px' }}>取消</button>
+          <button className="gbtn" onClick={handleCreate} style={{ fontSize: 12, padding: '8px 16px' }}>🚀 创建空间</button>
         </div>
       </div>
     </div>
