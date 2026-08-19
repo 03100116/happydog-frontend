@@ -40,7 +40,7 @@ export default function Layout({ children }) {
       <nav className="nav">
         <div className="nav-logo">
           <img src="/dog-logo.png" alt="HappyDog" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-          <span className="nav-logo-text">HappyDog🎼</span>
+          <span className="nav-logo-text">HappyDog</span>
         </div>
         <div style={{ flex: 1 }} />
         <div className="nav-r">
