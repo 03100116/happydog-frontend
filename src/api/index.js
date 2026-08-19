@@ -83,7 +83,20 @@ async function request(method, path, { body, query, headers = {} } = {}) {
   // If HTTP status is not OK but we got JSON, ensure code reflects it
   if (!res.ok && json.code === undefined) {
     json.code = res.status
-    json.message = json.message || json.detail || `服务器错误 (${res.status})`
+    json.message = json.message || json.detail?.message || json.detail || `服务器错误 (${res.status})`
+  }
+  // Normalize FastAPI validation errors: {detail: [...]} or {detail: {code, message}}
+  if (json.detail && json.code === undefined) {
+    if (typeof json.detail === 'object' && !Array.isArray(json.detail)) {
+      // {detail: {code: 1002, message: "用户名已存在"}}
+      json.code = json.detail.code || res.status
+      json.message = json.detail.message || JSON.stringify(json.detail)
+    } else if (Array.isArray(json.detail)) {
+      // FastAPI validation: {detail: [{type, msg, loc}, ...]}
+      json.code = res.status
+      const msgs = json.detail.map(d => d.msg || String(d)).join('; ')
+      json.message = msgs || `请求参数错误 (${res.status})`
+    }
   }
   return json
 }
