@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { showToast } from '../utils'
 
 const MBTI_OPTIONS = ['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ']
 const ZODIAC_OPTIONS = ['白羊','金牛','双子','巨蟹','狮子','处女','天秤','天蝎','射手','摩羯','水瓶','双鱼']
@@ -17,6 +19,7 @@ const DEFAULTS = {
 }
 
 export default function ProfileModal({ onClose }) {
+  const { logout } = useAuth()
   const [form, setForm] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
@@ -32,6 +35,7 @@ export default function ProfileModal({ onClose }) {
   const handleSave = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(form))
     setSaved(true)
+    showToast('资料已保存', 'success')
     setTimeout(() => setSaved(false), 1500)
   }
 
@@ -131,6 +135,13 @@ export default function ProfileModal({ onClose }) {
         <button className="profile-save" onClick={handleSave}>
           {saved ? '已保存 ✓' : '保存'}
         </button>
+
+        <button onClick={() => { logout(); onClose(); showToast('已退出登录', 'success') }} style={{
+          width: '100%', padding: 10, marginTop: 10, borderRadius: 'var(--r)',
+          border: '1px solid var(--gb)', background: 'transparent',
+          color: 'var(--red)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          transition: 'all .15s'
+        }}>退出登录</button>
       </div>
     </div>
   )
