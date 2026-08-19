@@ -1,11 +1,36 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { showToast } from '../utils'
+
+const ACCEPT_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'text/plain',
+]
 
 export default function Podcast() {
   const [uploaded, setUploaded] = useState(false)
+  const [fileName, setFileName] = useState('')
   const [generating, setGenerating] = useState(false)
   const [ready, setReady] = useState(false)
+  const fileRef = useRef(null)
 
-  const handleUpload = () => {
+  const handleUploadClick = () => {
+    fileRef.current?.click()
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!ACCEPT_TYPES.includes(file.type)) {
+      showToast('仅支持 PDF、Word 或 TXT 文件', 'warning')
+      return
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      showToast('文件大小不能超过 20MB', 'warning')
+      return
+    }
+    setFileName(file.name)
     setUploaded(true)
     setGenerating(true)
     setTimeout(() => {
@@ -22,7 +47,14 @@ export default function Podcast() {
 
       {/* Upload Area */}
       <div className="cb" style={{ maxWidth: 520 }}>
-        <div className="img-upload-area" onClick={!uploaded ? handleUpload : undefined}>
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".pdf,.doc,.docx,.txt"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <div className="img-upload-area" onClick={handleUploadClick}>
           {!uploaded ? (
             <div className="img-placeholder">
               <div className="img-placeholder-icon">📄</div>
@@ -31,7 +63,7 @@ export default function Podcast() {
           ) : (
             <div className="img-placeholder" style={{ background: 'rgba(94,198,176,.08)' }}>
               <div className="img-placeholder-icon">✅</div>
-              <div className="img-placeholder-text">文档已上传：产品技术方案.pdf</div>
+              <div className="img-placeholder-text">文档已上传：{fileName}</div>
             </div>
           )}
         </div>
