@@ -84,6 +84,12 @@ a:hover { color: #4a9e8c; }
 .dog-deco-5 { top: 65%; left: 2%; font-size: 20px; animation-delay: -2s; opacity: .1; }
 .dog-deco-6 { top: 22%; left: 10%; font-size: 24px; animation-delay: -5s; opacity: .07; }
 .dog-deco-7 { bottom: 35%; right: 8%; font-size: 20px; animation-delay: -6s; opacity: .08; }
+.dog-deco-8 { top: 78%; right: 4%; font-size: 22px; animation-delay: -7s; opacity: .07; }
+.dog-deco-9 { top: 8%; left: 6%; font-size: 20px; animation-delay: -2.5s; opacity: .08; }
+.dog-deco-10 { bottom: 45%; left: 3%; font-size: 26px; animation-delay: -4.5s; opacity: .06; }
+.dog-deco-11 { top: 50%; right: 12%; font-size: 18px; animation-delay: -1s; opacity: .09; }
+.dog-deco-12 { bottom: 12%; left: 8%; font-size: 18px; animation-delay: -5.5s; opacity: .08; }
+.dog-deco-13 { top: 30%; left: 1%; width: 55px; height: 55px; animation-delay: -3.5s; opacity: .05; }
 @keyframes dogFloat {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-14px) rotate(3deg); }
@@ -337,7 +343,7 @@ a:hover { color: #4a9e8c; }
 .cb-in:focus { border-color: rgba(95,179,163,.45); background: #fff; box-shadow: 0 0 0 3px rgba(95,179,163,.1); }
 .cb-in::placeholder { color: var(--text3); }
 
-.cb-a { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.cb-a { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 .ct {
   padding: 7px 14px;
   border-radius: 20px;
@@ -721,6 +727,9 @@ a:hover { color: #4a9e8c; }
 .gbtn:disabled { opacity: .5; cursor: not-allowed; }
 .comm-tab { padding: 7px 18px; border-radius: 18px; border: 1px solid var(--gb); font-size: 12px; font-weight: 500; color: var(--text2); background: transparent; transition: all .15s var(--ease-out); cursor: pointer; }
 .comm-tab.active { border-color: var(--teal); color: var(--teal); background: rgba(95,179,163,.07); font-weight: 600; }
+.comm-search { padding: 7px 14px; border-radius: 18px; border: 1px solid var(--gb); background: rgba(255,255,255,.55); color: var(--text); font-size: 12px; outline: none; width: 200px; transition: all .2s var(--ease-out); font-family: inherit; }
+.comm-search:focus { border-color: rgba(95,179,163,.4); background: #fff; box-shadow: 0 0 0 3px rgba(95,179,163,.1); width: 260px; }
+.comm-search::placeholder { color: var(--text3); }
 .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .room-card { background: rgba(255,255,255,.55); border: 1px solid var(--gb); border-radius: var(--rl); padding: 18px; cursor: pointer; transition: all .2s var(--ease-out); }
 .room-card:hover { transform: translateY(-3px); background: #fff; box-shadow: var(--shadow-md); }
