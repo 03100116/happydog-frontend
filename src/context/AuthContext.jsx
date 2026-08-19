@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react'
-import { apiLogin, apiRegister, apiGetMe } from '../api'
+import { apiLogin, apiRegister, apiGetMe, apiLogout } from '../api'
 
 const AuthContext = createContext(null)
 
@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(() => {
+    apiLogout()
     setUser(null)
     setToken(null)
   }, [])
