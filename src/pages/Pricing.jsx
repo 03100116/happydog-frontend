@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { showToast } from '../utils'
 
 const MONTHLY_PLANS = [
@@ -135,10 +136,21 @@ const YEARLY_PLANS = [
 
 export default function Pricing() {
   const [tab, setTab] = useState('monthly')
+  const navigate = useNavigate()
   const plans = tab === 'monthly' ? MONTHLY_PLANS : YEARLY_PLANS
 
   return (
-    <div className="pricing-page">
+    <div className="pricing-page" style={{ position: 'relative' }}>
+      <button onClick={() => navigate(-1)} style={{
+        position: 'absolute', top: 0, right: 0,
+        width: 36, height: 36, borderRadius: '50%',
+        background: 'rgba(0,0,0,.06)', border: 'none',
+        color: 'var(--text2)', fontSize: 16, cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all .15s'
+      }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,.12)'}
+         onMouseLeave={e => e.target.style.background = 'rgba(0,0,0,.06)'}
+      >✕</button>
       <h2 className="pricing-title">选择适合你的方案 🐕</h2>
       <p className="pricing-sub">解锁更多创作能力，让 Every dog has its day</p>
 
