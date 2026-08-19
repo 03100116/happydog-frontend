@@ -10,7 +10,24 @@ export default function LoginModal({ mode: initMode, onClose, onSwitch }) {
 
   const isRegister = mode === 'register'
 
+  const validate = () => {
+    if (isRegister) {
+      if (!form.nickname.trim()) return '请输入昵称'
+      if (!form.email.trim()) return '请输入邮箱'
+      if (!form.email.includes('@')) return '请输入有效的邮箱地址'
+    }
+    if (!form.username.trim()) return '请输入用户名'
+    if (!form.password) return '请输入密码'
+    if (form.password.length < 6) return '密码长度不能少于 6 位'
+    return ''
+  }
+
   const handleSubmit = async () => {
+    const validationError = validate()
+    if (validationError) {
+      setError(validationError)
+      return
+    }
     setError('')
     setLoading(true)
     try {
@@ -36,7 +53,7 @@ export default function LoginModal({ mode: initMode, onClose, onSwitch }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="login-box">
-        <h3>{isRegister ? '加入 HappyDog🎼' : '登录 HappyDog🎼'}</h3>
+        <h3>{isRegister ? '加入 HappyDog' : '登录 HappyDog'}</h3>
         {isRegister && (
           <>
             <div className="login-field">
