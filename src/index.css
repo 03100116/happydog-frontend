@@ -10,17 +10,17 @@
   --text: #1f1d1b;
   --text2: rgba(0, 0, 0, .55);
   --text3: rgba(0, 0, 0, .32);
-  --red: #e06c75;
-  --orange: #f0a060;
-  --purple: #a88de4;
-  --teal: #5fb3a3;
-  --mint: #7dd3c0;
-  --gold: #e5b85c;
-  --blue: #6a9fd4;
-  --green: #6bbd81;
-  --peach: #f5c4b0;
-  --lavender: #c9b8f0;
-  --sky: #a8cfeb;
+  --red: #d4525c;
+  --orange: #e89040;
+  --purple: #9270db;
+  --teal: #3ea392;
+  --mint: #4dc4a8;
+  --gold: #d9a840;
+  --blue: #5088c4;
+  --green: #50ad6a;
+  --peach: #f0b098;
+  --lavender: #b8a4e8;
+  --sky: #88bfe0;
   --r: 14px;
   --rl: 20px;
   --rxl: 24px;
@@ -50,10 +50,10 @@ body::before {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(127,211,192,.10), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 80% 15%, rgba(196,181,253,.09), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 70% 85%, rgba(245,196,176,.08), transparent 50%),
-    radial-gradient(ellipse 40% 35% at 15% 75%, rgba(168,207,235,.07), transparent 45%);
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(77,196,168,.18), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 80% 15%, rgba(146,112,219,.16), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 70% 85%, rgba(240,176,152,.14), transparent 50%),
+    radial-gradient(ellipse 40% 35% at 15% 75%, rgba(136,191,224,.12), transparent 45%);
   animation: bgPulse 18s ease-in-out infinite alternate;
 }
 
@@ -70,6 +70,26 @@ body::before {
 button { font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 a { color: var(--teal); text-decoration: none; transition: color .15s; }
 a:hover { color: #4a9e8c; }
+
+/* ═══ DOG DECORATIONS ═══ */
+.dog-deco {
+  position: fixed; z-index: 0; pointer-events: none;
+  opacity: .08; animation: dogFloat 8s ease-in-out infinite;
+}
+.dog-deco img { width: 100%; height: 100%; object-fit: contain; }
+.dog-deco-1 { top: 12%; right: 6%; width: 90px; height: 90px; animation-delay: 0s; }
+.dog-deco-2 { bottom: 18%; left: 4%; width: 70px; height: 70px; animation-delay: -3s; opacity: .06; }
+.dog-deco-3 { top: 40%; right: 3%; font-size: 28px; animation-delay: -1.5s; opacity: .1; }
+.dog-deco-4 { bottom: 8%; right: 15%; font-size: 22px; animation-delay: -4s; opacity: .09; }
+.dog-deco-5 { top: 65%; left: 2%; font-size: 20px; animation-delay: -2s; opacity: .1; }
+.dog-deco-6 { top: 22%; left: 10%; font-size: 24px; animation-delay: -5s; opacity: .07; }
+.dog-deco-7 { bottom: 35%; right: 8%; font-size: 20px; animation-delay: -6s; opacity: .08; }
+@keyframes dogFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-14px) rotate(3deg); }
+  50% { transform: translateY(-6px) rotate(-2deg); }
+  75% { transform: translateY(-18px) rotate(1deg); }
+}
 
 /* ═══ SHELL ═══ */
 .shell {
@@ -244,8 +264,8 @@ a:hover { color: #4a9e8c; }
 .hero-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 60% 45% at 50% 30%, rgba(127,211,192,.10), transparent 60%),
-    radial-gradient(ellipse 45% 35% at 25% 55%, rgba(196,181,253,.07), transparent 50%);
+    radial-gradient(ellipse 60% 45% at 50% 30%, rgba(77,196,168,.16), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 25% 55%, rgba(146,112,219,.13), transparent 50%);
   pointer-events: none;
   animation: heroGlow 14s ease-in-out infinite alternate;
 }
