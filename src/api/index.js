@@ -69,8 +69,23 @@ async function request(method, path, { body, query, headers = {} } = {}) {
   }
   if (body) opts.body = JSON.stringify(body)
   const res = await fetch(url, opts)
-  const json = await res.json()
-  return json // { code, message, data, request_id }
+  // Try to parse JSON regardless of HTTP status
+  let json
+  try {
+    json = await res.json()
+  } catch {
+    // Backend returned non-JSON (e.g. 500 HTML page)
+    if (!res.ok) {
+      return { code: res.status, message: `服务器错误 (${res.status})`, data: null, request_id: '' }
+    }
+    return { code: 1, message: '响应格式错误', data: null, request_id: '' }
+  }
+  // If HTTP status is not OK but we got JSON, ensure code reflects it
+  if (!res.ok && json.code === undefined) {
+    json.code = res.status
+    json.message = json.message || json.detail || `服务器错误 (${res.status})`
+  }
+  return json
 }
 
 // ═══ PUBLISHED CARDS (local only — tracks what user published this session) ═══
